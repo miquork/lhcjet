@@ -52,7 +52,7 @@ void drawData() {
   TLatex *tex = new TLatex();
   tex->SetTextSize(0.045);
   tex->SetNDC();
-  tex->DrawLatex(0.40,0.17,"|y| < 0.4, anti-k_{T} R = 0.4--0.7");
+  tex->DrawLatex(0.40,0.17,"|y| < 0.5, anti-k_{T} R = 0.4--0.7");
 
   vector<string> vd;
   vd.push_back("cms_r07_y00x05");
