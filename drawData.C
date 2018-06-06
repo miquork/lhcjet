@@ -23,6 +23,9 @@ void drawData() {
   TFile *f = new TFile("lhcdata.root","READ");
   assert(f && !f->IsZombie());
 
+  TFile *fc = new TFile("cms/HEPData-ins1298810-v1-Table_1.root","READ");
+  assert(fc && !fc->IsZombie());
+
   curdir->cd();
 
   //TH1D *h = new TH1D("h",";p_{T} (GeV);Data / fit",100,50,2000.);
@@ -55,38 +58,43 @@ void drawData() {
   tex->DrawLatex(0.40,0.17,"|y| < 0.5, anti-k_{T} R = 0.4--0.7");
 
   vector<string> vd;
-  vd.push_back("cms_r07_y00x05");
-  vd.push_back("atlas_r06_y00x05");
-  vd.push_back("cms_r05_y00x05");
-  vd.push_back("atlas_r04_y00x05");
+  vd.push_back("cms07_r07_y00-05");
+  vd.push_back("atlas07_r06_y00-05");
+  vd.push_back("cms07_r05_y00-05");
+  //vd.push_back("Table 1/Graph1D_y1");
+  vd.push_back("atlas07_r04_y00-05");
 
   map<string, int> color;
-  color["cms_r07_y00x05"] = kBlue;
-  color["atlas_r06_y00x05"] = kGreen+2;
-  color["cms_r05_y00x05"] = kOrange+2;
-  color["atlas_r04_y00x05"] = kRed;
+  color["cms07_r07_y00-05"] = kBlue;
+  color["atlas07_r06_y00-05"] = kGreen+2;
+  color["cms07_r05_y00-05"] = kOrange+2;
+  //color["Table 1/Graph1D_y1"] = kOrange+2;
+  color["atlas07_r04_y00-05"] = kRed;
   
   map<string, int> marker;
-  marker["cms_r07_y00x05"] = kFullCircle;
-  marker["atlas_r06_y00x05"] = kOpenCircle;
-  marker["cms_r05_y00x05"] = kFullCircle;
-  marker["atlas_r04_y00x05"] = kOpenCircle;
+  marker["cms07_r07_y00-05"] = kFullCircle;
+  marker["atlas07_r06_y00-05"] = kOpenCircle;
+  marker["cms07_r05_y00-05"] = kFullCircle;
+  //marker["Table 1/Graph1D_y1"] = kFullCircle;
+  marker["atlas07_r04_y00-05"] = kOpenCircle;
 
   map<string, const char*> label;
-  label["cms_r07_y00x05"] = "CMS R=0.7";
-  label["atlas_r06_y00x05"] = "ATLAS R=0.6";
-  label["cms_r05_y00x05"] = "CMS R=0.5";
-  label["atlas_r04_y00x05"] = "ATLAS R=0.4";
+  label["cms07_r07_y00-05"] = "CMS R=0.7";
+  label["atlas07_r06_y00-05"] = "ATLAS R=0.6";
+  label["cms07_r05_y00-05"] = "CMS R=0.5";
+  //label["Table 1/Graph1D_y1"] = "CMS R=0.5";
+  label["atlas07_r04_y00-05"] = "ATLAS R=0.4";
   
   // CMS lumi 5.0/fb, ATLAS 4.5/fb, 11% difference
   // We get better agreement assuming they are the same
   // => Correct CMS up 5%, ATLAS down 5%
   double kfactor0 = 1;//1./1.05;
   map<string, double> kfactor;
-  kfactor["cms_r07_y00x05"] = 1;//1.05;
-  kfactor["atlas_r06_y00x05"] = 1;//0.90;
-  kfactor["cms_r05_y00x05"] = 1;//1.05;
-  kfactor["atlas_r04_y00x05"] = 1;//0.90;
+  kfactor["cms07_r07_y00-05"] = 1;//1.05;
+  kfactor["atlas07_r06_y00-05"] = 1;//0.90;
+  kfactor["cms07_r05_y00-05"] = 1;//1.05;
+  //kfactor["Table 1/Graph1D_y1"] = 1;
+  kfactor["atlas07_r04_y00-05"] = 1;//0.90;
 
   
   TMultiGraph *mg = new TMultiGraph();
@@ -94,10 +102,21 @@ void drawData() {
   vector<TGraphAsymmErrors*> vt(vd.size());
   vector<TGraphErrors*> vr(vd.size());
   for (int i = 0; i != vd.size(); ++i) {
-    
-    TGraphAsymmErrors *g = (TGraphAsymmErrors*)f->Get((vd[i]+"_stat").c_str());
+
+    string ss = Form("%s_%s",vd[i].c_str(),"stat");
+    cout << ss << endl << flush;
+    TGraphAsymmErrors *g = (TGraphAsymmErrors*)f->Get(ss.c_str());
+    //if (!g) {
+    //g = (TGraphAsymmErrors*)fc->Get((vd[i]).c_str());
+    //g = (TGraphAsymmErrors*)g->Clone();
+    //}
     assert(g);
+
+    cout << vd[i] << endl << flush;
     TGraphAsymmErrors *gt = (TGraphAsymmErrors*)f->Get(vd[i].c_str());
+    //if (!gt) {
+    //gt = (TGraphAsymmErrors*)fc->Get((vd[i]).c_str());
+    //}
     assert(gt);
     if (i<=1) mg->Add(gt);
     vg[i]  = g;
